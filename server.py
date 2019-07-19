@@ -29,7 +29,7 @@ class GitHub(object):
         self.top = int(config.get('args', 'top'))  # no.of top results
         self.stargazers_count_key = config.get('args', 'stargazers_count_key')
         self.name_key = config.get('args', 'name_key')
-        self.url = "https://api.github.com/orgs/{}/repos"
+        self.url = "https://api.github.com/search/repositories?q=org:{}&sort=stars&per_page=3"
 
     def on_post(self, req, resp):
         req_body = req.stream.read()
@@ -56,12 +56,8 @@ class GitHub(object):
             res = requests.get(url, verify=False, timeout=100)
             if res.status_code == 200:
                 res_data = res.json()
-                sorted_res_data = sorted(
-                    res_data, key=lambda x: x[self.stargazers_count_key], reverse=True)
-                sorted_res_data = sorted_res_data[:3] if len(
-                    sorted_res_data) >= self.top else sorted_res_data
                 result = [{'stars': w[self.stargazers_count_key],
-                           'name': w[self.name_key]} for w in sorted_res_data]
+                           'name': w[self.name_key]} for w in res_data['items']]
             else:
                 raise Exception(
                     "Error while calling url: {}\nStatus code: {}".format(url, res.status_code))
