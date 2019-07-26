@@ -26,7 +26,7 @@ print(result)
 Load test using `Apahe Bench(ab)`.
 
 
-```python
+```bash
 # Install Apache Bench
 $ sudo apt install apache2-utils
 # Start load-test
